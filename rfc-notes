@@ -1,0 +1,12 @@
+Important sections for implementation:
+
+ * URI - [rfc7230] Section 2.7
+ * URI forms - [rfc7230] Section 5.3
+   ::: origin-form, absolute-form, authority-form, asterisk-form
+ * Effective URI - [rfc7230] Section 5.5
+   ::: converting from relative to absolute path?
+
+NOTE: HTTP separates
+      __resource identification__ (URI) from
+      __request semantics__ (request method + request-modifying headers).
+
