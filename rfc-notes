@@ -10,3 +10,15 @@ NOTE: HTTP separates
       __resource identification__ (URI) from
       __request semantics__ (request method + request-modifying headers).
 
+
+
+
+Sample HTTP Request:
+
+GET / HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+#Upgrade-Insecure-Requests: 1
+#User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36
+#Sec-Fetch-Mode: navigate
+#Sec-Fetch-User: ?1
