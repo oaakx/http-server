@@ -1,5 +1,6 @@
 #include <iostream>
 #include "args.hpp"
+#include "server.hpp"
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -14,9 +15,8 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    // start_server(port, serve_dir);
-    cout << "Port: " << port << "\n";
-    cout << "Dir: " << serve_dir << "\n";
+    cout << "Serving dir=" << serve_dir << " on port=" << port << " ...\n";
+    start_server(port, serve_dir);
 
     return 0;
 }

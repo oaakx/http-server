@@ -10,15 +10,14 @@ void parse_request_line(const string &reqline,
                    string &method,
                    string &uri,
                    string &version);
-void parse_header(const string &header,
-                  string &name,
-                  string &value);
-void parse_request(int connfd,
-                   string &method,
-                   string &uri,
-                   string &version,
-                   map<string, string> &headers,
-                   string &body);
+void parse_header_field(const string &header,
+                        string &name,
+                        string &value);
+void parse_request_header(int connfd,
+                          string &method,
+                          string &uri,
+                          string &version,
+                          map<string, string> &headers);
 
 /*
     Returns first position that is whitespace (space or tab)

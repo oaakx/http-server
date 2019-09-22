@@ -13,23 +13,38 @@ When implementing this HTTP/1.1 server, I referred to the following more refined
 
 For more info, see [RFC2616 is Dead](https://www.mnot.net/blog/2014/06/07/rfc2616_is_dead).
 
+# TODO
+
+- [ ] Measure performance
+    - Number of requests per second
+    - Number of concurrent connections
+
 # Features
 
 Currently available:
 
-- ...
+- [ ] IPv4 only
+- [ ] Serving static files
+- [ ] Methods: only `GET`
 
 NOT available yet:
 
-- [ ] IPv4 only
-- [ ] Serving static files
 - [ ] IPv6
 - [ ] Multipart data
 - [ ] Conditional requests
 - [ ] Range requests
 - [ ] Basic authentication over HTTP
-- [ ] https?
-- [ ] Methods: CONNECT, OPTIONS
+- [ ] Methods: `HEAD`, `POST`, `PUT`, `DELETE`, `CONNECT`, `OPTIONS`, `TRACE`
+
+# How to build
+
+Build using:
+
+    make build
+
+It will generate an output executable `http-server`. To run it:
+
+    ./http-server --dir tests/sample-serve-dir --port 8080
 
 # Future work
 
@@ -37,6 +52,7 @@ NOT available yet:
 - [ ] Migrate tests to [Google Test](https://github.com/google/googletest)
 - [ ] Audit security
   - Review "Security Considerations" sections (in all of above mentioned RFCs)
+  - **Known issue:** Currently, requesting `/../somefile` will serve a file outside of the served directory, which is a security disaster.
 
 # Acknowledgments
 

@@ -6,10 +6,6 @@
 #include "exceptions.hpp"
 #include "request.hpp"
 
-vector<string> split_lines();
-void parse_request_line();
-void parse_header();
-void parse_request();
 
 /*
     Splits request into separate lines (with CRLF as delimiter).
@@ -106,9 +102,9 @@ void parse_request_line(const string &reqline,
     * NAME      - header field name
     * VALUE     - header field value
 */
-void parse_header(const string &header,
-                  string &name,
-                  string &value) {
+void parse_header_field(const string &header,
+                        string &name,
+                        string &value) {
     // ABNF grammar:
     //   header = name ":" OWS value OWS
     //   OWS    = *(" " / HTAB)          ; optional whitespace
@@ -137,12 +133,11 @@ void parse_header(const string &header,
     * HEADERS   - request headers
     * BODY      - request body (if present, or empty string otherwise)
 */
-void parse_request(int connfd,
-                   string &method,
-                   string &uri,
-                   string &version,
-                   map<string, string> &headers,
-                   string &body) {
+void parse_request_header(int connfd,
+                          string &method,
+                          string &uri,
+                          string &version,
+                          map<string, string> &headers) {
     string request = read_until_double_crlf(connfd);
     vector<string> header_lines = split_header_lines(request);
 
@@ -153,7 +148,7 @@ void parse_request(int connfd,
         if (header_lines[i] == "")
             continue;
 
-        parse_header(header_lines[i], name, value);
+        parse_header_field(header_lines[i], name, value);
         headers[name] = value;
     }
 }

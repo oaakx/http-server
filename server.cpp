@@ -8,7 +8,11 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <vector>
+#include <map>
 #include <thread>
+#include "request.hpp"
+#include "response.hpp"
+#include "constants.hpp"
 #include "server.hpp"
 using namespace std;
 
@@ -45,7 +49,8 @@ int init_server(int port) {
     // is not in TIME_WAIT state, you get "already in use" error
     // regardless of the value of SO_REUSEADDR option.
     // (Which is what we want anyways!)
-    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0)
+    int enable = 1;
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
         error("ERROR setsockopt(SO_REUSEADDR) failed");
 
     struct sockaddr_in serv_addr;
@@ -69,26 +74,31 @@ int init_server(int port) {
     Handles single session associated with NEWSOCKFD.
 */
 void handle_connection(int connfd, const string &serve_dir) {
-    parse_request();
-    generate_response();
+    string method;
+    string uri;
+    string version;
+    map<string, string> headers;
 
-    /*
-    char buffer[BUFFER_SIZE];
-    int nread = read(connfd, buffer, BUFFER_SIZE);
-    if (nread < 0)
-        error("ERROR reading from socket");
+    parse_request_header(connfd, method, uri, version, headers);
 
-    cout << "\nRead this message:\n" << buffer << "\nEND\n";
+    cerr << "method: " << method << "\n";
+    cerr << "uri: " << uri << "\n";
+    cerr << "version: " << version << "\n";
 
-    int nwritten = write(connfd, SAMPLE_HTTP_RESPONSE.c_str(), SAMPLE_HTTP_RESPONSE.length());
-    if (nwritten < 0)
-        error("ERROR writing to socket");
-    */
+    if (method == "GET" && version == HTTP_VERSION)
+        serve_file(serve_dir, uri, connfd);
+    else {
+        respond_501(connfd);
+    }
 
+    cerr << "\n";
     close(connfd);
 }
 
 
+/*
+    Start serving files from SERVE_DIR on port PORT.
+*/
 void start_server(int port, const string &serve_dir) {
     int sockfd = init_server(port);
 
@@ -111,11 +121,11 @@ void start_server(int port, const string &serve_dir) {
 }
 
 // temp
-int main(int argc, char* argv[]) {
-    int port = 8080;
-    string serve_dir = "tests/sample-serve-dir";
-    start_server(port, serve_dir);
-
-    return 0;
-}
+// int main(int argc, char* argv[]) {
+//     int port = 8080;
+//     string serve_dir = "tests/sample-serve-dir";
+//     start_server(port, serve_dir);
+// 
+//     return 0;
+// }
 
