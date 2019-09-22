@@ -29,9 +29,13 @@ Not available yet:
 - [ ] Range requests
 - [ ] Basic authentication over HTTP
 
+- Methods: CONNECT, OPTIONS
+
 # Future work
 
-- [ ] Improve security
+- [ ] Restructure code from C-style method collection to C++ OOP approach
+- [ ] Migrate tests to Google Test
+- [ ] Audit security
   - Review "Security Considerations" sections (in above mentioned RFCs)
 
 # Acknowledgments

@@ -8,74 +8,67 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-
 #include <vector>
 #include <thread>
-
+#include "server.hpp"
 using namespace std;
 
-void handle_connection(int);
 
-const int MAX_PENDING_CONNECTIONS = 10000; // backlog for listen()
-const int BUFFER_SIZE = 256;
-const string SAMPLE_HTTP_RESPONSE =
-    "HTTP/1.1 200 OK\r\n"
-    "Date: Mon, 27 Jul 2009 12:28:53 GMT\r\n"
-    "Server: Apache/2.2.14 (Win32)\r\n"
-    "Last-Modified: Wed, 22 Jul 2009 19:15:56 GMT\r\n"
-    "Content-Type: text/html\r\n"
-    "Connection: Closed\r\n"
-    "\r\n"
-    "<html>\r\n"
-    "<body>\r\n"
-    "<h1>Hello, World!</h1>\r\n"
-    "</body>\r\n"
-    "</html>\r\n";
-
-
-void error(const char *msg)
-{
+/*
+    Prints error (using perror) and exits with failure.
+*/
+void error(const char *msg) {
     perror(msg);
     exit(EXIT_FAILURE);
 }
 
-/* void client() {
-    socket();
-    connect();
 
-    // session
-    send();
-    receive();
-} */
+/*
+    Do socket initialization for listening to port PORT.
 
-void server(char *port) {
+    Returns server socket fd.
+*/
+int init_server(int port) {
     int sockfd;
+
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
         error("ERROR opening socket");
 
-
-    int portno;
-    portno = atoi(port);
+    // Turns SO_REUSEADDR option on.
+    //
+    // This allows reuse of the address in TIME_WAIT state.
+    // That means if another process is using the address and it
+    // is not in TIME_WAIT state, you get "already in use" error
+    // regardless of the value of SO_REUSEADDR option.
+    // (Which is what we want anyways!)
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0)
+        error("ERROR setsockopt(SO_REUSEADDR) failed");
 
     struct sockaddr_in serv_addr;
     bzero((char *) &serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET; // internet domain
-    serv_addr.sin_addr.s_addr = INADDR_ANY; // bind to all
-    serv_addr.sin_port = htons(portno);
+    serv_addr.sin_addr.s_addr = INADDR_ANY; // bind to all addresses
+    serv_addr.sin_port = htons(port);
 
-    if  (bind(sockfd, (struct sockaddr *) &serv_addr,
+    if (bind(sockfd, (struct sockaddr *) &serv_addr,
               sizeof(serv_addr)) < 0)
         error("ERROR binding to port");
 
-    listen(sockfd, MAX_PENDING_CONNECTIONS);
+    if (listen(sockfd, MAX_PENDING_CONNECTIONS) < 0)
+        error("ERROR listening to port");
 
+    return sockfd;
+}
+
+void start_server(int port, const string &serve_dir) {
+    int sockfd = init_server(port);
+
+    int newsockfd;
     struct sockaddr_in cli_addr;
     socklen_t clilen = sizeof(cli_addr);
 
-    // Accept incoming connections, one at a time.
-    std::vector<std::thread *> threads;
-    int newsockfd;
+    // Accept incoming connections
     while (newsockfd = accept(sockfd, (struct sockaddr*) &cli_addr,
                   &clilen)) {
         if (newsockfd < 0) {
@@ -83,20 +76,15 @@ void server(char *port) {
            continue;
         }
 
-        std::thread *thp = new std::thread(handle_connection, newsockfd);
+        std::thread *thp = new std::thread(handle_connection, newsockfd, serve_dir);
         threads.push_back(thp);
     }
 
-    for (auto thp: threads) {
-        thp->join();
-        delete thp;
-        cout << "Thread finished\n";
-    }
-
+    // Never reached
     close(sockfd);
 }
 
-void handle_connection(int newsockfd) {
+void handle_connection(int newsockfd, const string &serve_dir) {
     char buffer[BUFFER_SIZE];
     int nread = read(newsockfd, buffer, BUFFER_SIZE);
     if (nread < 0)
@@ -111,14 +99,10 @@ void handle_connection(int newsockfd) {
     close(newsockfd);
 }
 
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        cerr << "ERROR incorrect argument format\n";
-        cerr << "Usage: ./main PORT\n";
-        exit(EXIT_FAILURE);
-    }
-
-    server(argv[1]);
+int main(int argc, char* argv[]) {
+    int port = 8080;
+    string serve_dir = "tests/sample-serve-dir";
+    start_server(port, serve_dir);
 
     return 0;
 }

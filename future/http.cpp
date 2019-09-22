@@ -1,5 +1,4 @@
 #include <string>
-
 #include "http.h"
 
 namespace http {
@@ -35,23 +34,26 @@ namespace http {
     class Body {}
 
     class Header {
+    public:
         string name;
         string value;
     }
 
     class Request {
-        public Method method;
-        public string uri;
-        public Version version;
-        public vector<Header> headers;
-        public Body body;
+    public:
+        Method method;
+        string uri;
+        Version version;
+        vector<Header> headers;
+        Body body;
     };
 
     class Response {
-        public Version version;
-        public int status;
-        public string status_desc;
-        public vector<Header> headers;
-        public Body body;
+    public:
+        Version version;
+        int status;
+        string status_desc;
+        vector<Header> headers;
+        Body body;
     }
 }
