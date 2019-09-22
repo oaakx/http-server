@@ -19,7 +19,7 @@ Currently available:
 
 - ...
 
-Not available yet:
+NOT available yet:
 
 - [ ] IPv4 only
 - [ ] Serving static files
@@ -28,15 +28,15 @@ Not available yet:
 - [ ] Conditional requests
 - [ ] Range requests
 - [ ] Basic authentication over HTTP
-
-- Methods: CONNECT, OPTIONS
+- [ ] https?
+- [ ] Methods: CONNECT, OPTIONS
 
 # Future work
 
-- [ ] Restructure code from C-style method collection to C++ OOP approach
-- [ ] Migrate tests to Google Test
+- [ ] Restructure code from C-style method collection to C++ OOP approach (`future` subdirectory)
+- [ ] Migrate tests to [Google Test](https://github.com/google/googletest)
 - [ ] Audit security
-  - Review "Security Considerations" sections (in above mentioned RFCs)
+  - Review "Security Considerations" sections (in all of above mentioned RFCs)
 
 # Acknowledgments
 

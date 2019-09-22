@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,6 +11,10 @@
 #include <thread>
 #include "server.hpp"
 using namespace std;
+
+void error(const char *msg);
+int init_server(int port);
+void handle_connection(int connfd, const string &serve_dir);
 
 
 /*
@@ -61,6 +64,31 @@ int init_server(int port) {
     return sockfd;
 }
 
+
+/*
+    Handles single session associated with NEWSOCKFD.
+*/
+void handle_connection(int connfd, const string &serve_dir) {
+    parse_request();
+    generate_response();
+
+    /*
+    char buffer[BUFFER_SIZE];
+    int nread = read(connfd, buffer, BUFFER_SIZE);
+    if (nread < 0)
+        error("ERROR reading from socket");
+
+    cout << "\nRead this message:\n" << buffer << "\nEND\n";
+
+    int nwritten = write(connfd, SAMPLE_HTTP_RESPONSE.c_str(), SAMPLE_HTTP_RESPONSE.length());
+    if (nwritten < 0)
+        error("ERROR writing to socket");
+    */
+
+    close(connfd);
+}
+
+
 void start_server(int port, const string &serve_dir) {
     int sockfd = init_server(port);
 
@@ -71,34 +99,18 @@ void start_server(int port, const string &serve_dir) {
     // Accept incoming connections
     while (newsockfd = accept(sockfd, (struct sockaddr*) &cli_addr,
                   &clilen)) {
-        if (newsockfd < 0) {
-           error("ERROR accepting");
-           continue;
-        }
+        if (newsockfd < 0)
+           error("ERROR accepting connection");
 
-        std::thread *thp = new std::thread(handle_connection, newsockfd, serve_dir);
-        threads.push_back(thp);
+        std::thread t(handle_connection, newsockfd, serve_dir);
+        t.detach();
     }
 
     // Never reached
     close(sockfd);
 }
 
-void handle_connection(int newsockfd, const string &serve_dir) {
-    char buffer[BUFFER_SIZE];
-    int nread = read(newsockfd, buffer, BUFFER_SIZE);
-    if (nread < 0)
-        error("ERROR reading from socket");
-
-    cout << "\nRead this message:\n" << buffer << "\nEND\n";
-
-    int nwritten = write(newsockfd, SAMPLE_HTTP_RESPONSE.c_str(), SAMPLE_HTTP_RESPONSE.length());
-    if (nwritten < 0)
-        error("ERROR writing to socket");
-
-    close(newsockfd);
-}
-
+// temp
 int main(int argc, char* argv[]) {
     int port = 8080;
     string serve_dir = "tests/sample-serve-dir";
@@ -106,3 +118,4 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
