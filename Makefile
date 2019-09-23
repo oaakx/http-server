@@ -2,6 +2,8 @@
 CPP=g++
 OUTPUT=http-server
 
+all: build
+
 # Testing
 test: test_request
 

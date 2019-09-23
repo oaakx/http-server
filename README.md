@@ -23,9 +23,10 @@ For more info, see [RFC2616 is Dead](https://www.mnot.net/blog/2014/06/07/rfc261
 
 Currently available:
 
-- [ ] IPv4 only
-- [ ] Serving static files
-- [ ] Methods: only `GET`
+- [x] IPv4 only
+- [x] Serving static files
+- [x] Methods: only `GET`
+- [x] MIME types: `text/html`, `text/css`, `image/jpg`, `image/png`
 
 NOT available yet:
 
@@ -36,7 +37,7 @@ NOT available yet:
 - [ ] Basic authentication over HTTP
 - [ ] Methods: `HEAD`, `POST`, `PUT`, `DELETE`, `CONNECT`, `OPTIONS`, `TRACE`
 
-# How to build
+# How to build and run
 
 Build using:
 
@@ -45,6 +46,8 @@ Build using:
 It will generate an output executable `http-server`. To run it:
 
     ./http-server --dir tests/sample-serve-dir --port 8080
+
+Go to [`localhost:8080/index.html`](http://localhost:8080/index.html) on your browser. If you go to `localhost:8080` you will get 404 Not Found error.
 
 # Future work
 

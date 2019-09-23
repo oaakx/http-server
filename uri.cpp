@@ -52,7 +52,7 @@ void get_fileinfo_by_uri(const string &uri, const string &serve_dir,
 
     // Open ifstream
     target_file.open(local_path);
-    cerr << "path: " << local_path << "\n";
+    // cerr << "path: " << local_path << "\n";
 
     // Mime type
     // TODO far-from-complete list

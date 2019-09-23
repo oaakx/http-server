@@ -81,9 +81,9 @@ void handle_connection(int connfd, const string &serve_dir) {
 
     parse_request_header(connfd, method, uri, version, headers);
 
-    cerr << "method: " << method << "\n";
-    cerr << "uri: " << uri << "\n";
-    cerr << "version: " << version << "\n";
+    // cerr << "method: " << method << "\n";
+    // cerr << "uri: " << uri << "\n";
+    // cerr << "version: " << version << "\n";
 
     if (method == "GET" && version == HTTP_VERSION)
         serve_file(serve_dir, uri, connfd);
@@ -91,7 +91,7 @@ void handle_connection(int connfd, const string &serve_dir) {
         respond_501(connfd);
     }
 
-    cerr << "\n";
+    // cerr << "\n";
     close(connfd);
 }
 

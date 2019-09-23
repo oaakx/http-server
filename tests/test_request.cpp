@@ -40,13 +40,13 @@ void test_parse_request_line() {
     assert(version == "HTTP/1.1");
 }
 
-void test_parse_header() {
+void test_parse_header_field() {
     string name = "Host";
     string value = "localhost";
     string header = name + ": " + value;
 
     string name_, value_;
-    parse_header(header, name_, value_);
+    parse_header_field(header, name_, value_);
 
     assert(name == name_);
     assert(value == value_);
@@ -59,8 +59,8 @@ int main() {
     test_parse_request_line();
     cout << "Passed: parse_request_line\n";
 
-    test_parse_header();
-    cout << "Passed: parse_header\n";
+    test_parse_header_field();
+    cout << "Passed: parse_header_field\n";
 
     return 0;
 }
